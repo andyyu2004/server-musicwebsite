@@ -1,13 +1,21 @@
 import * as mysql from 'mysql';
 
-//type QueryResult = [any?, mysql.FieldInfo[]?]
 // mysql -u RDS_username -p -h RDS_endpoint
+
+// const pool = mysql.createPool({
+//   connectionLimit: 10, 
+//   host: process.env.MYSQL_HOSTNAME,
+//   user: process.env.MYSQL_USERNAME,
+//   password: process.env.MYSQL_PASSWORD,
+//   database: process.env.MYSQL_DATABASE,
+// });
 
 const pool = mysql.createPool({
   connectionLimit: 10, 
-  host: process.env.MYSQL_HOST,
-  user: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
+  host: process.env.RDS_HOSTNAME,
+  user: process.env.RDS_USERNAME,
+  password: process.env.RDS_PASSWORD,
+  port: 3306,
   database: process.env.MYSQL_DATABASE,
 });
 
