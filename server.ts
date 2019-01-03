@@ -8,6 +8,7 @@ import * as session from 'express-session';
 import * as crypto from 'crypto';
 import * as passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
+require('dotenv').config();
 
 import apiRouter from './src/routes/api';
 

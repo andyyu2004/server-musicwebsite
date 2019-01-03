@@ -27,6 +27,7 @@
     "aws-sdk": "^2.382.0",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
+    "dotenv": "^6.2.0",
     "dropbox": "^4.0.14",
     "express": "^4.16.4",
     "express-fileupload": "^1.0.0",

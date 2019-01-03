@@ -43,7 +43,7 @@ async function addAlbumToDB(album: AlbumModel) {
 
 async function getAllAlbums() {
   const command = 
-  `SELECT albumid, albumname, artistname from albums a inner join artists ar on a.artist = ar.artistid;`;
+  `SELECT albumid, albumname, artistname from Albums a inner join Artists ar on a.artist = ar.artistid;`;
   try {
     return await query(command);
   } catch (err) {

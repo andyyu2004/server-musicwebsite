@@ -45,7 +45,8 @@ async function upload(file: UploadedFile, tag) {
 
 async function moveFile(file: UploadedFile, id: number, encoding: string) {
   try {
-    const filepath = path.join(__dirname, '../../musicFiles/', id.toString() + encoding);
+    const filepath = path.join(__dirname, '../../', id.toString() + encoding);
+    // await promisify(fs.open)(filepath, 'w');
     await promisify(file.mv)(filepath);
   } catch (err) {
     console.log("FAILED TO MOVE FILE TO LOCAL!!!");

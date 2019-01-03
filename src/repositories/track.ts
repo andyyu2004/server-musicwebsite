@@ -67,8 +67,8 @@ function uploadTrack(filepath: string) {
 async function getAllTracks() {
   const command = 
     `SELECT trackid, title, artistname, albumname, genre, filename, encoding 
-    from tracks t inner join albums al on t.album = al.albumid inner join 
-    artists ar on al.artist = ar.artistid ORDER BY t.title`;
+    from Tracks t inner join Albums al on t.album = al.albumid inner join 
+    Artists ar on al.artist = ar.artistid ORDER BY t.title`;
   try {
     return await query(command);
   } catch (err) {
@@ -79,7 +79,7 @@ async function getAllTracks() {
 
 async function getFileStream(encoding: string, trackid: number): Promise<[ReadStream, number]> {
   try {
-    const filepath = path.join(__dirname, '../../musicFiles/', trackid.toString() + encoding);
+    const filepath = path.join(__dirname, '../../', trackid.toString() + encoding);
     const stats = await promisify(fs.stat)(filepath);
     return [fs.createReadStream(filepath), stats.size];
   } catch (err) {
@@ -89,7 +89,7 @@ async function getFileStream(encoding: string, trackid: number): Promise<[ReadSt
 
 async function getTrackFile(filename: string) {
   console.log(`Getting file from s3: ${filename}`);
-  const filepath = path.join(__dirname, '../../musicFiles/', filename);
+  const filepath = path.join(__dirname, '../../', filename);
   return new Promise((resolve, reject) => {
     fs.readFile(filepath, (err, data) => {
       if (err) reject(err);

@@ -129,4 +129,14 @@ router.get('/tracksProtected', (req: any, res) => {
   console.log(req.session);
 });
 
+import query from '../services/mysql';
+
+router.get('/testQuery', async (req, res) => {
+  console.log("Test Query");
+  const command = "SELECT * FROM Artists";
+  const resp = await query(command);
+  console.log(resp);
+  res.send();
+});
+
 export default router;
