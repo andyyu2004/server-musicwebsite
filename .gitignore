@@ -1,4 +1,5 @@
 dist
 sessions
 node_modules
-
+test.ts
+start-server.bash

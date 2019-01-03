@@ -1,12 +1,13 @@
 import * as mysql from 'mysql';
 
 //type QueryResult = [any?, mysql.FieldInfo[]?]
+// mysql -u RDS_username -p -h RDS_endpoint
 
 const pool = mysql.createPool({
   connectionLimit: 10, 
-  host: 'localhost',
-  user: 'root',
-  password: 'password',
+  host: process.env.MYSQL_HOST,
+  user: process.env.MYSQL_USER,
+  password: process.env.MYSQL_PASSWORD,
   database: 'music',
 });
 

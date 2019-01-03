@@ -10,13 +10,6 @@ import * as WebTorrent from 'webtorrent';
 
 const router = express.Router();
 
-//OKTA ORG
-//https://dev-442060.oktapreview.com
-// CID: 0oaipeqczzUvNleqU0h7
-// CS: OXHRNHD7ywY5c6cWHvvSk0Mg6gp5zzV6QVd_ARS0
-// token: 00S77boPlgK0ajDrAVyD5NPKEynBkQXCYVdR3Db0HM
-
-
 // Middleware to initialise torrentClient instance
 router.use('/music/torrent-tracks', (req: any, res, next) => {
   req.torrentClient = new WebTorrent();
