@@ -20,7 +20,7 @@ const uuidv4 = require('uuid/v4');
 
 const app = express();
 
-app.use(express.static(path.join(__dirname, '../client/build')));
+app.use(express.static(path.join(__dirname, '/../client/build')));
 app.use(fileUpload());
 app.use(cors());
 app.use(bodyparser.json());
@@ -40,8 +40,8 @@ app.use(passport.session());
 app.use('/api', apiRouter);
 
 app.get('*', (req: Request, res: Response) => {
-  //res.sendFile(path.join(__dirname+'/../client/build/index.html'));
-  res.send('404');
+  // res.sendFile(path.join(__dirname+'/../client/build/index.html'));
+  res.send('404 - Music Website');
 });
 
 const port = process.env.PORT || 3001;

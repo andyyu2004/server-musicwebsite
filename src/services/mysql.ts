@@ -2,22 +2,22 @@ import * as mysql from 'mysql';
 
 // mysql -u RDS_username -p -h RDS_endpoint
 
-// const pool = mysql.createPool({
-//   connectionLimit: 10, 
-//   host: process.env.MYSQL_HOSTNAME,
-//   user: process.env.MYSQL_USERNAME,
-//   password: process.env.MYSQL_PASSWORD,
-//   database: process.env.MYSQL_DATABASE,
-// });
-
 const pool = mysql.createPool({
   connectionLimit: 10, 
-  host: process.env.RDS_HOSTNAME,
-  user: process.env.RDS_USERNAME,
-  password: process.env.RDS_PASSWORD,
-  port: 3306,
+  host: process.env.MYSQL_HOSTNAME,
+  user: process.env.MYSQL_USERNAME,
+  password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DATABASE,
 });
+
+// const pool = mysql.createPool({
+//   connectionLimit: 10, 
+//   host: process.env.RDS_HOSTNAME,
+//   user: process.env.RDS_USERNAME,
+//   password: process.env.RDS_PASSWORD,
+//   port: 3306,
+//   database: process.env.MYSQL_DATABASE,
+// });
 
 pool.on('connection', conn => console.log("Mysql connected"));
 
