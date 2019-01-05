@@ -18,7 +18,7 @@ async function checkUnique(artist: string, album: string, title: string): Promis
     AND artist = ${artisthash}
     AND album = ${albumhash}`;
   try {
-    const res = await query(command);
+    const res = await query(command).catch(err => { console.log(err); throw err });
     return res.length === 0;
   } catch (err) {
     console.log("Failed to select Track" + err);
@@ -51,7 +51,7 @@ function createTrackObj(tag): TrackModel {
 async function addTrackToDB(track: TrackModel) {
   const command = "INSERT INTO Tracks SET ?";
   try {
-    return await query(command, track);
+    return await query(command, track).catch(err => { console.log(err); throw err });
   } catch (err) {
     console.log("Failed to insert Track" + err);
     throw err;
@@ -70,7 +70,7 @@ async function getAllTracks() {
     from Tracks t inner join Albums al on t.album = al.albumid inner join 
     Artists ar on al.artist = ar.artistid ORDER BY t.title`;
   try {
-    return await query(command);
+    return await query(command).catch(err => { console.log(err); throw err });
   } catch (err) {
     console.log("Failed to get Tracks " + err);
     throw err;
@@ -80,7 +80,7 @@ async function getAllTracks() {
 async function getFileStream(encoding: string, trackid: number): Promise<[ReadStream, number]> {
   try {
     const filepath = path.join(__dirname, '../../', trackid.toString() + encoding);
-    const stats = await promisify(fs.stat)(filepath);
+    const stats = await promisify(fs.stat)(filepath).catch(err => { console.log(err); throw err });
     return [fs.createReadStream(filepath), stats.size];
   } catch (err) {
     throw err;

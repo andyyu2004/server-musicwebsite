@@ -14,17 +14,17 @@ async function upload(file: UploadedFile, tag) {
     if (!tag.tags.title) { tag.tags.title = "Unknown Track"; }
     const { artist, album, title } = tag.tags;
     // Check if already existent in database
-    const artistIsUnique = await checkArtistUnique(artist);
+    const artistIsUnique = await checkArtistUnique(artist).catch(err => { console.log(err); throw err });
     if (artistIsUnique) {
       const newArtist = createArtistObject(tag);
       await addArtistToDB(newArtist);
     }
-    const albumIsUnique = await checkAlbumUnique(artist, album);
+    const albumIsUnique = await checkAlbumUnique(artist, album).catch(err => { console.log(err); throw err });
     if (albumIsUnique) {
       const newAlbum = createAlbumObj(tag);
       await addAlbumToDB(newAlbum);
     }
-    const trackIsUnique = await checkTrackUnique(artist, album, title);
+    const trackIsUnique = await checkTrackUnique(artist, album, title).catch(err => { console.log(err); throw err });
     if (trackIsUnique) {
       console.log(`${artist}/${album}/${title} does not exist`);
       const newTrack = createTrackObj(tag);
@@ -47,7 +47,7 @@ async function moveFile(file: UploadedFile, id: number, encoding: string) {
   try {
     const filepath = path.join(__dirname, '../../', id.toString() + encoding);
     // await promisify(fs.open)(filepath, 'w');
-    await promisify(file.mv)(filepath);
+    await promisify(file.mv)(filepath).catch(err => { console.log(err); throw err });
   } catch (err) {
     console.log("FAILED TO MOVE FILE TO LOCAL!!!");
     throw err;

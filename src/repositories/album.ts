@@ -6,9 +6,8 @@ async function checkUnique(artist: string, album: string): Promise<boolean> {
   const artisthash = sha1_64(artist);
   const albumhash = sha1_64(artist+album);
   const command = `SELECT 1 FROM Albums WHERE albumid = ${albumhash} AND artist = ${artisthash}`;
-  
   try {
-    const res = await query(command);
+    const res = await query(command).catch(err => { console.log(err); throw err });
     const isUnique = res.length === 0;
     return isUnique;
   } catch (err) {
@@ -32,7 +31,7 @@ function createAlbumObj(tag): AlbumModel {
 async function addAlbumToDB(album: AlbumModel) {
   const command = "INSERT INTO Albums SET ?";
   try {
-    return await query(command, album);
+    return await query(command, album).catch(err => { console.log(err); throw err });
   } catch (err) {
     console.log("Failed to insert Album" + err);
     throw err;
@@ -45,7 +44,7 @@ async function getAllAlbums() {
   const command = 
   `SELECT albumid, albumname, artistname from Albums a inner join Artists ar on a.artist = ar.artistid;`;
   try {
-    return await query(command);
+    return await query(command).catch(err => { console.log(err); throw err });
   } catch (err) {
     console.log("Failed to get Albums " + err);
     throw err;

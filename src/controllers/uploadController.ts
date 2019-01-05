@@ -18,7 +18,7 @@ async function uploadFiles(req: Request, res: Response) {
   }
   try {
     for (const file of Object.keys(files).map(key => files[key])) {
-      const res = await uploadFile(file).catch(err => { throw err; }) 
+      const res = await uploadFile(file).catch(err => { console.log(err); throw err });
       console.log(res);
     }
     res.status(200).send("All Files Uploaded");
@@ -43,8 +43,8 @@ async function uploadFile(file: UploadedFile) {
   try {
     console.log("Upload File");
     // const filepath = await moveFilePromise(file);
-    const tag = await readTagsPromise(file);
-    const res = await upload(file, tag);
+    const tag = await readTagsPromise(file).catch(err => { console.log(err); throw err });
+    const res = await upload(file, tag).catch(err => { console.log(err); throw err });
     // fs.unlink(filepath, err => {});
     return res;
   } catch(err) {
