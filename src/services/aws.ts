@@ -2,12 +2,6 @@ import * as AWS from 'aws-sdk';
 import * as fs from 'fs';
 import * as path from 'path';
 
-
-// AWS.config.update({
-//   accessKeyId: 
-//   secretAccessKey: 
-// });
-
 const s3 = new AWS.S3();
 
 export function uploadFileS3(filepath: string) {

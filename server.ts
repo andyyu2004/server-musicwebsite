@@ -29,7 +29,7 @@ app.use(bodyparser.urlencoded({extended: true}));
 app.use(session({
   //genid: req => uuidv4(),
   store: new SessionStore(),
-  secret: crypto.randomBytes(64).toString('hex'),
+  secret: process.env.jwtSecret,
   resave: false,
   saveUninitialized: false
 }));
