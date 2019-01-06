@@ -8,7 +8,7 @@ import * as fuzzy from 'fuzzyset.js';
 
 async function getTracksInfo(req: Request, res: Response) {
   try {
-    const allTracks = await getAllTracks().catch(err => { console.log(err); throw err });
+    const allTracks = await getAllTracks(req.user).catch(err => { console.log(err); throw err });
     res.status(200).send(allTracks);
   } catch (err) {
     console.log(err);
@@ -30,7 +30,7 @@ async function getTrack(req: Request, res: Response) {
   try {
     console.log("Streaming Track");
     const { id, encoding } = req.params;
-    const [stream, fileSize] = await getFileStream(encoding, id).catch(err => { console.log(err); throw err });
+    const [stream, fileSize] = await getFileStream(req.user, encoding, id).catch(err => { console.log(err); throw err });
     const head = {
       'Content-Length': fileSize,
       'Content-Type': `audio/${encoding}`,

@@ -12,7 +12,6 @@ export default function(passport) {
           console.log("Email Does Not Exist")
           return done(null, false, { message: "User Does Not Exist" });
         }
-        console.log("Email Found")
         return resp[0].password;
       })
       .then(hashedPassword => {
@@ -20,7 +19,7 @@ export default function(passport) {
           console.log("Incorrect Password");
           return done(null, false, { message: "Password Incorrect" });
         }
-        console.log("AUTHENTICATED");
+        console.log("Authenticated");
         done(null, email);
       })
       .catch(err => console.log(err));
@@ -28,8 +27,8 @@ export default function(passport) {
   );
 
   const jwtOpts = {
-    //jwtFromRequest: ExtractJwt.fromUrlQueryParameter('jwt_token'),
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    jwtFromRequest: ExtractJwt.fromUrlQueryParameter('jwt_token'),
+    // jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: process.env.jwtSecret,
   };
 

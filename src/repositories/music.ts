@@ -1,5 +1,5 @@
 import * as path from 'path';
-import * as fs from 'fs';
+import * as fs from 'fs-extra'; 
 import promisify from '../utility/promisify';
 import { checkUnique as checkArtistUnique, createArtistObject, addArtistToDB } from './artist';
 import { checkUnique as checkAlbumUnique, createAlbumObj, addAlbumToDB } from './album';
@@ -7,7 +7,7 @@ import { checkUnique as checkTrackUnique, createTrackObj, addTrackToDB, uploadTr
 import { UploadedFile } from 'express-fileupload';
 import { Upload } from 'aws-sdk/clients/devicefarm';
 
-async function upload(file: UploadedFile, tag) {
+async function upload(file: UploadedFile, tag, user: string) {
   try {
     if (!tag.tags.artist) { tag.tags.artist = "Unknown Artist"; }
     if (!tag.tags.album) { tag.tags.album = "Unknown Album"; } 
@@ -27,11 +27,11 @@ async function upload(file: UploadedFile, tag) {
     const trackIsUnique = await checkTrackUnique(artist, album, title).catch(err => { console.log(err); throw err });
     if (trackIsUnique) {
       console.log(`${artist}/${album}/${title} does not exist`);
-      const newTrack = createTrackObj(tag);
+      const newTrack = createTrackObj(tag, user);
       const { trackid, encoding } = newTrack;
       await addTrackToDB(newTrack);
       // Aync upload to s3
-      await moveFile(file, trackid, encoding);
+      await moveFile(file, user, trackid, encoding);
       // uploadTrack(tag.tags.localpath);
       return `Uploading ${artist}/${album}/${title} to s3`;
     } else {
@@ -43,10 +43,14 @@ async function upload(file: UploadedFile, tag) {
   }
 }
 
-async function moveFile(file: UploadedFile, id: number, encoding: string) {
+async function moveFile(file: UploadedFile, user: string, id: number, encoding: string) {
   try {
-    const filepath = path.join(__dirname, '../../', id.toString() + encoding);
-    // await promisify(fs.open)(filepath, 'w');
+    const folderpath = path.join(__dirname, '../../users', user);
+    const folderExists = await fs.exists(folderpath);
+    if (!folderExists) {
+      await fs.mkdir(path.join(folderpath));
+    }
+    const filepath = path.join(folderpath, id.toString() + encoding);
     await promisify(file.mv)(filepath).catch(err => { console.log(err); throw err });
   } catch (err) {
     console.log("FAILED TO MOVE FILE TO LOCAL!!!");

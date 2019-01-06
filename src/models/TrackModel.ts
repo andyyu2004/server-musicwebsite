@@ -5,10 +5,11 @@ export default interface TrackModel {
   trackid: id;
   filename: string;
   encoding: string;
+  album: id;
+  artist: id;
+  user: string;
   length?: number;
   title?: string;
-  artist?: id;
-  album?: id;
   genre?: string;
   trackNumber?: number;
   lyrics?: string;
