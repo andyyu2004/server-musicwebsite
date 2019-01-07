@@ -4,6 +4,7 @@ import * as mysql from 'mysql';
 let pool;
 
 if (process.env.USE_RDS) {
+  console.log("Using RDS");
   pool = mysql.createPool({
     connectionLimit: 10, 
     host: process.env.RDS_HOSTNAME,
@@ -13,6 +14,7 @@ if (process.env.USE_RDS) {
     port: 3306,
   });
 } else {
+  console.log("Using Local DB")
   pool = mysql.createPool({
     connectionLimit: 10, 
     host: process.env.MYSQL_HOSTNAME,
