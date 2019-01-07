@@ -9,16 +9,18 @@ import promisify from '../utility/promisify';
 
 // POST
 
-async function checkUnique(artist: string, album: string, title: string): Promise<boolean> {
-  const artisthash = sha1_64(artist);
-  const albumhash = sha1_64(artist+album);
-  const trackhash = sha1_64(artist+album+title);
-  const command = `SELECT 1 FROM Tracks 
-    WHERE trackid = ${trackhash} 
-    AND artist = ${artisthash}
-    AND album = ${albumhash}`;
+async function checkUnique(artist: string, album: string, title: string, userid: number): Promise<boolean> {
+  const artisthash = sha1_64(artist + userid);
+  const albumhash = sha1_64(artist + album + userid);
+  const trackhash = sha1_64(artist + album + title + userid);
+  const command = `SELECT * FROM Tracks 
+    WHERE trackid = ? 
+    AND artist = ?
+    AND album = ?
+    AND userid = ?
+    LIMIT 1`;
   try {
-    const res = await query(command).catch(err => { console.log(err); throw err });
+    const res = await query(command, [trackhash, artisthash, albumhash, userid]).catch(err => { throw err });
     return res.length === 0;
   } catch (err) {
     console.log("Failed to select Track" + err);
@@ -26,11 +28,11 @@ async function checkUnique(artist: string, album: string, title: string): Promis
   }
 }
 
-function createTrackObj(tag, user): TrackModel {
+function createTrackObj(tag, userid: number): TrackModel {
   const { title, track, genre, lyrics, filename, comment, album, artist } = tag.tags;
-  const artisthash = sha1_64(artist);
-  const albumhash = sha1_64(artist+album);
-  const trackhash = sha1_64(artist+album+title);
+  const artisthash = sha1_64(artist + userid);
+  const albumhash = sha1_64(artist + album + userid);
+  const trackhash = sha1_64(artist + album + title + userid);
   const lyric = lyrics ? lyrics.lyrics : "";
   const comments = comment ? comment.text : "";
   const encoding = path.extname(filename);
@@ -39,7 +41,7 @@ function createTrackObj(tag, user): TrackModel {
     title,
     encoding,
     comments,
-    user,
+    userid,
     trackid: trackhash,
     album: albumhash,
     artist: artisthash,
@@ -52,7 +54,7 @@ function createTrackObj(tag, user): TrackModel {
 async function addTrackToDB(track: TrackModel) {
   const command = "INSERT INTO Tracks SET ?";
   try {
-    return await query(command, track).catch(err => { console.log(err); throw err });
+    return await query(command, track).catch(err => { throw err });
   } catch (err) {
     console.log("Failed to insert Track" + err);
     throw err;
@@ -65,23 +67,23 @@ function uploadTrack(filepath: string) {
 
 // GET
 
-async function getAllTracks(user: string) {
+async function getAllTracks(userid: string) {
   const command = 
     `SELECT trackid, title, artistname, albumname, genre, filename, encoding 
     from Tracks t inner join Albums al on t.album = al.albumid inner join 
-    Artists ar on al.artist = ar.artistid WHERE t.user = ? ORDER BY t.title`;
+    Artists ar on al.artist = ar.artistid WHERE t.userid = ? ORDER BY t.title`;
   try {
-    return await query(command, user).catch(err => { console.log(err); throw err });
+    return await query(command, userid).catch(err => { throw err });
   } catch (err) {
     console.log("Failed to get Tracks " + err);
     throw err;
   }
 }
 
-async function getFileStream(user: string, encoding: string, trackid: number): Promise<[ReadStream, number]> {
+async function getFileStream(userid: number, encoding: string, trackid: number): Promise<[ReadStream, number]> {
   try {
-    const filepath = path.join(__dirname, '../../users/', user, trackid.toString() + encoding);
-    const stats = await promisify(fs.stat)(filepath).catch(err => { console.log(err); throw err });
+    const filepath = path.join(__dirname, '../../users/', userid.toString(), trackid.toString() + encoding);
+    const stats = await promisify(fs.stat)(filepath).catch(err => { throw err });
     return [fs.createReadStream(filepath), stats.size];
   } catch (err) {
     throw err;

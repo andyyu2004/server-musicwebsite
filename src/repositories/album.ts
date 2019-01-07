@@ -2,12 +2,12 @@ import sha1_64 from '../utility/sha1custom';
 import query from '../services/mysql';
 import { AlbumModel } from '../models'
 
-async function checkUnique(artist: string, album: string): Promise<boolean> {
-  const artisthash = sha1_64(artist);
-  const albumhash = sha1_64(artist+album);
-  const command = `SELECT 1 FROM Albums WHERE albumid = ${albumhash} AND artist = ${artisthash}`;
+async function checkUnique(artist: string, album: string, userid: number): Promise<boolean> {
+  const artisthash = sha1_64(artist + userid);
+  const albumhash = sha1_64(artist + album + userid);
+  const command = `SELECT * FROM Albums WHERE albumid = ? AND artist = ? AND userid = ? LIMIT 1`;
   try {
-    const res = await query(command).catch(err => { console.log(err); throw err });
+    const res = await query(command, [albumhash, artisthash, userid]).catch(err => { throw err; });
     const isUnique = res.length === 0;
     return isUnique;
   } catch (err) {
@@ -16,12 +16,12 @@ async function checkUnique(artist: string, album: string): Promise<boolean> {
   }
 }
 
-function createAlbumObj(tag): AlbumModel {
+function createAlbumObj(tag, userid: number): AlbumModel {
   const { album, artist } = tag.tags;
-  const artisthash = sha1_64(artist);
-  const albumhash = sha1_64(artist+album);
-  
+  const artisthash = sha1_64(artist + userid);
+  const albumhash = sha1_64(artist + album + userid);
   return {
+    userid,
     albumid: albumhash,
     artist: artisthash,
     albumname: album,
@@ -40,11 +40,11 @@ async function addAlbumToDB(album: AlbumModel) {
 
 // GET
 
-async function getAllAlbums() {
+async function getAllAlbums(userid: number) {
   const command = 
-  `SELECT albumid, albumname, artistname from Albums a inner join Artists ar on a.artist = ar.artistid;`;
+  `SELECT albumid, albumname, artistname from Albums a inner join Artists ar on a.artist = ar.artistid WHERE a.userid = ?;`;
   try {
-    return await query(command).catch(err => { console.log(err); throw err });
+    return await query(command, userid).catch(err => { throw err; });
   } catch (err) {
     console.log("Failed to get Albums " + err);
     throw err;

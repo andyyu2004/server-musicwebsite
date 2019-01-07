@@ -26,16 +26,16 @@ app.use(cors());
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({extended: true}));
 
-app.use(session({
-  //genid: req => uuidv4(),
-  store: new SessionStore(),
-  secret: process.env.jwtSecret,
-  resave: false,
-  saveUninitialized: false
-}));
+// app.use(session({
+//   //genid: req => uuidv4(),
+//   store: new SessionStore(),
+//   secret: process.env.jwtSecret,
+//   resave: false,
+//   saveUninitialized: false
+// }));
 
 app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.session());
 
 app.use('/api', apiRouter);
 

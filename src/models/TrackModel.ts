@@ -7,7 +7,7 @@ export default interface TrackModel {
   encoding: string;
   album: id;
   artist: id;
-  user: string;
+  userid: id;
   length?: number;
   title?: string;
   genre?: string;

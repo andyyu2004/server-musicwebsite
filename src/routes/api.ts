@@ -2,7 +2,7 @@ import * as express from 'express';
 import * as passport from 'passport';
 import { signIn } from '../controllers/authController'; 
 import { getTrackByMagnet } from '../controllers/getController';
-import { registerUser, signInUser, getSalt } from '../controllers/userController';
+import { registerUser, getSalt } from '../controllers/userController';
 import * as WebTorrent from 'webtorrent';
 import protectedRouter from './protected';
 

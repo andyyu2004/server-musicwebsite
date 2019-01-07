@@ -1,9 +1,12 @@
 import { UserModel } from '../models';
 import query from '../services/mysql';
+import sha1_64 from '../utility/sha1custom';
 import * as crypto from 'crypto';
 
 function createUserObj(email: string, name: string, password: string, salt: string): UserModel {
+  const userid = sha1_64(email);
   return {
+    userid,
     email,
     password,
     name,

@@ -7,8 +7,9 @@ import * as fuzzy from 'fuzzyset.js';
 // Should log all errors to err file 
 
 async function getTracksInfo(req: Request, res: Response) {
+  const { userid } = req.authInfo;
   try {
-    const allTracks = await getAllTracks(req.user).catch(err => { console.log(err); throw err });
+    const allTracks = await getAllTracks(userid).catch(err => { throw err; });
     res.status(200).send(allTracks);
   } catch (err) {
     console.log(err);
@@ -17,8 +18,9 @@ async function getTracksInfo(req: Request, res: Response) {
 }
 
 async function getAlbumsInfo(req: Request, res: Response) {
+  const { userid } = req.authInfo;
   try {
-    const allAlbums = await getAllAlbums().catch(err => { console.log(err); throw err });
+    const allAlbums = await getAllAlbums(userid).catch(err => { throw err; });
     res.status(200).send(allAlbums);
   } catch (err) {
     console.log(err);
@@ -27,10 +29,11 @@ async function getAlbumsInfo(req: Request, res: Response) {
 }
 
 async function getTrack(req: Request, res: Response) {
+  const { userid } = req.authInfo;
   try {
     console.log("Streaming Track");
     const { id, encoding } = req.params;
-    const [stream, fileSize] = await getFileStream(req.user, encoding, id).catch(err => { console.log(err); throw err });
+    const [stream, fileSize] = await getFileStream(userid, encoding, id).catch(err => { throw err; });
     const head = {
       'Content-Length': fileSize,
       'Content-Type': `audio/${encoding}`,

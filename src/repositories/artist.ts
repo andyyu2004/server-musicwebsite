@@ -2,11 +2,10 @@ import sha1_64 from '../utility/sha1custom';
 import query from '../services/mysql';
 import { ArtistModel } from '../models'
 
-async function checkUnique(artist: string): Promise<boolean> {
-  const hash = sha1_64(artist);
-  const command = `SELECT 1 FROM Artists WHERE artistid = ?`;
+async function checkUnique(artist: string, userid: number): Promise<boolean> {
+  const command = `SELECT * FROM Artists WHERE artistname = ? AND userid = ? LIMIT 1`;
   try {
-    const res = await query(command, hash).catch(err => { console.log(err); throw err });
+    const res = await query(command, [artist, userid]).catch(err => { throw err; });
     return res.length === 0;
   } catch (err) {
     console.log("Failed to select Artist" + err);
@@ -14,10 +13,11 @@ async function checkUnique(artist: string): Promise<boolean> {
   }
 }
 
-function createArtistObject(tag): ArtistModel {
+function createArtistObject(tag, userid: number): ArtistModel {
   const { artist } = tag.tags;
-  const hash = sha1_64(artist);
+  const hash = sha1_64(artist + userid);
   return {
+    userid,
     artistname: artist,
     artistid: hash,
   };
@@ -26,7 +26,7 @@ function createArtistObject(tag): ArtistModel {
 async function addArtistToDB(artist: ArtistModel) {
   const command = "INSERT INTO Artists SET ?";
   try {
-    return await query(command, artist).catch(err => { console.log(err); throw err });
+    return await query(command, artist).catch(err => { throw err; });
   } catch (err) {
     console.log("Failed to insert Artist" + err);
     throw err;
