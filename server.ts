@@ -39,9 +39,9 @@ app.use(passport.initialize());
 
 app.use('/api', apiRouter);
 
-app.get('*', (req: Request, res: Response) => {
-  // res.sendFile(path.join(__dirname+'../../client/build/index.html'));
-  res.send('404 - Music Website');
+app.get('/*', (req: Request, res: Response) => {
+res.sendFile(path.join(__dirname, '../../client/build/index.html'));
+  // res.send('404 - Music Website');
 });
 
 // Creates the /dist/users folder on startup if non-existent
