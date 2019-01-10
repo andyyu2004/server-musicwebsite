@@ -1,16 +1,18 @@
 import { hashPassword, createUserObj, checkUnique, addUserToDB, getPassword, getUserSalt } from '../repositories/users';
+import * as crypto from 'crypto';
 
 async function registerUser(req, res) {
   try {
-    const { email, name, password, salt } = req.body;
-    const isUnique = await checkUnique(email).catch(err => { console.log(err); throw err; });
+    const { name, password, salt } = req.body;
+    const email = req.body.email.toLowerCase();
+    const isUnique = await checkUnique(email).catch(err => { throw err; });
     if (!isUnique) {
       console.log(`User ${email} already exists`);
       return res.status(200).send("User already exists");
     }
     const newUser = createUserObj(email, name, password, salt);
-    await addUserToDB(newUser).catch(err => { console.log(err); throw err; });
-    console.log('done')
+    await addUserToDB(newUser).catch(err => { throw err; });
+    console.log('User Created', email);
   } catch (err) {
     console.log("Error in registerUser " + err);
     res.status(500).send(err);
@@ -41,11 +43,12 @@ async function registerUser(req, res) {
 
 async function getSalt(req, res) {
   try {
-    const { email } = req.params;
-    const salt = await getUserSalt(email).catch(err => { console.log(err); throw err });
+    let { email } = req.params;
+    email = email.toLowerCase();
+    const salt = await getUserSalt(email).catch(err => { throw err; });
     if (!salt) {
       console.log("USER DOES NOT EXIST");
-      return res.send(null);
+      return res.status(422).send("User does not exist");
     }
     res.status(200).send(salt);
   } catch (err) {
@@ -54,8 +57,21 @@ async function getSalt(req, res) {
   }
 }
 
+async function encrypt(req, res) {
+  const { email, password } = req.body;
+  console.log('encrypt');
+  const { salt } = await getUserSalt(email).catch(err => { throw err; });
+  if (!salt) {
+    console.log("USER DOES NOT EXIST");
+    return res.status(422).send("User does not exist");
+  }
+  const hash = crypto.pbkdf2Sync(password, salt, 1000, 512, 'sha512').toString('hex');
+  return res.status(200).send(hash);
+}
+
 export { 
   registerUser,
   getSalt,
   //signInUser,
+  encrypt,
 };

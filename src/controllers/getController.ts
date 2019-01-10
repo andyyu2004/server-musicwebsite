@@ -8,6 +8,7 @@ import * as fuzzy from 'fuzzyset.js';
 
 async function getTracksInfo(req: Request, res: Response) {
   const { userid } = req.authInfo;
+  console.log("Fetch All Tracks For User ", req.user);
   try {
     const allTracks = await getAllTracks(userid).catch(err => { throw err; });
     res.status(200).send(allTracks);

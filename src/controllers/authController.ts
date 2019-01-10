@@ -12,6 +12,7 @@ function signIn(req: any, res, next) {
       if (err) { console.log("Error in auth/signIn/login " + err); res.send(err); }
       //console.log(`req.session.passport: ${JSON.stringify(req.session.passport)}`)
       console.log(`req.user: ${JSON.stringify(req.user)}`)
+      user = user.toLowerCase();
       const userid = sha1_64(user);
       const token = jwt.sign({ user, userid }, process.env.jwtSecret);
       res.json({

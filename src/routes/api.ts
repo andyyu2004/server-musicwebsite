@@ -2,7 +2,7 @@ import * as express from 'express';
 import * as passport from 'passport';
 import { signIn } from '../controllers/authController'; 
 import { getTrackByMagnet } from '../controllers/getController';
-import { registerUser, getSalt } from '../controllers/userController';
+import { registerUser, getSalt, encrypt } from '../controllers/userController';
 import * as WebTorrent from 'webtorrent';
 import protectedRouter from './protected';
 
@@ -50,6 +50,8 @@ router.post('/register', registerUser);
 router.post('/signin', signIn);
 
 router.get('/salt/:email', getSalt);
+
+router.post('/encrypt', encrypt);
 
 import query from '../services/mysql';
 
