@@ -19,16 +19,24 @@ router.use('/protected', passport.authenticate('jwt', { session: false }), prote
 
 router.get('/test', (req, res) => {
   console.log('Test API Called');
-  res.send('test API');
+  res.json('test API');
 });
 
 router.get('/refreshLibrary', (req, res) => {
   console.log('Refresh Library API Called');
-  res.send('refresh API');
+  res.json('refresh API');
 });
 
 router.get('/', (req, res) => {
-  res.send('API Root');
+  res.json({
+    res: "API Root"
+  });
+});
+
+router.get('/error', (req, res) => {
+  res.status(500).json({
+    err: "Error Message"
+  })
 });
 
 router.get('/music/torrent-tracks/:magnetURI/:fileName', (req, res) => {

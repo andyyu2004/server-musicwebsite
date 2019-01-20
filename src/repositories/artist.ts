@@ -3,7 +3,7 @@ import query from '../services/mysql';
 import { ArtistModel } from '../models'
 
 async function checkUnique(artist: string, userid: number): Promise<boolean> {
-  const command = `SELECT * FROM Artists WHERE artistname = ? AND userid = ? LIMIT 1`;
+  const command = `SELECT * FROM Artists WHERE artist = ? AND userid = ? LIMIT 1`;
   try {
     const res = await query(command, [artist, userid]).catch(err => { throw err; });
     return res.length === 0;
@@ -18,7 +18,7 @@ function createArtistObject(tag, userid: number): ArtistModel {
   const hash = sha1_64(artist + userid);
   return {
     userid,
-    artistname: artist,
+    artist,
     artistid: hash,
   };
 }

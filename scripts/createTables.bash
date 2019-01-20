@@ -14,16 +14,16 @@ create table Users (
 
 create table Artists (
 	artistid bigint unsigned primary key,
-  artistname varchar(100) NOT NULL,
+  artist varchar(100) NOT NULL,
 	userid bigint unsigned NOT NULL,
 	foreign key(userid) references Users(userid)
 );
 
 create table Albums (
 	albumid bigint unsigned primary key,
-	albumname varchar(100) NOT NULL,
-	artist bigint unsigned NOT NULL,
-	foreign key(artist) references Artists(artistid),
+	album varchar(100) NOT NULL,
+	artistid bigint unsigned NOT NULL,
+	foreign key(artistid) references Artists(artistid),
 	userid bigint unsigned NOT NULL,
 	foreign key(userid) references Users(userid),
 	year smallint unsigned,
@@ -32,10 +32,10 @@ create table Albums (
 
 create table Tracks (
 	trackid bigint unsigned primary key,
-	artist bigint unsigned NOT NULL,
-	foreign key(artist) references Artists(artistid),
-	album bigint unsigned NOT NULL,
-	foreign key(album) references Albums(albumid),
+	artistid bigint unsigned NOT NULL,
+	foreign key(artistid) references Artists(artistid),
+	albumid bigint unsigned NOT NULL,
+	foreign key(albumid) references Albums(albumid),
 	userid bigint unsigned NOT NULL,
 	foreign key(userid) references Users(userid),
 	encoding varchar(50) NOT NULL,

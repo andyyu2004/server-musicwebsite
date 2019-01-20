@@ -5,7 +5,7 @@ import { AlbumModel } from '../models'
 async function checkUnique(artist: string, album: string, userid: number): Promise<boolean> {
   const artisthash = sha1_64(artist + userid);
   const albumhash = sha1_64(artist + album + userid);
-  const command = `SELECT * FROM Albums WHERE albumid = ? AND artist = ? AND userid = ? LIMIT 1`;
+  const command = `SELECT * FROM Albums WHERE albumid = ? AND artistid = ? AND userid = ? LIMIT 1`;
   try {
     const res = await query(command, [albumhash, artisthash, userid]).catch(err => { throw err; });
     const isUnique = res.length === 0;
@@ -23,8 +23,8 @@ function createAlbumObj(tag, userid: number): AlbumModel {
   return {
     userid,
     albumid: albumhash,
-    artist: artisthash,
-    albumname: album,
+    artistid: artisthash,
+    album: album,
   };
 }
 
@@ -42,7 +42,7 @@ async function addAlbumToDB(album: AlbumModel) {
 
 async function getAllAlbums(userid: number) {
   const command = 
-  `SELECT albumid, albumname, artistname from Albums a inner join Artists ar on a.artist = ar.artistid WHERE a.userid = ?;`;
+  `SELECT albumid, album, artistid from Albums a inner join Artists ar on a.artistid = ar.artistid WHERE a.userid = ?;`;
   try {
     return await query(command, userid).catch(err => { throw err; });
   } catch (err) {

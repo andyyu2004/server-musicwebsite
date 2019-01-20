@@ -11,7 +11,7 @@ async function getTracksInfo(req: Request, res: Response) {
   console.log("Fetch All Tracks For User ", req.user);
   try {
     const allTracks = await getAllTracks(userid).catch(err => { throw err; });
-    res.status(200).send(allTracks);
+    res.status(200).json(allTracks);
   } catch (err) {
     console.log(err);
     return res.status(500).send(err);

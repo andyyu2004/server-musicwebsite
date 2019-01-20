@@ -1,9 +1,7 @@
 import * as jsmediatags from 'jsmediatags';
-import * as fs from 'fs';
-import * as path from 'path';
-import { TrackModel } from '../models';
 import { upload } from '../repositories/music';
-import promisify from '../utility/promisify'
+import promisify from '../utility/promisify';
+import * as mm from 'music-metadata';
 import { Request, Response } from 'express';
 import { UploadedFile } from 'express-fileupload';
 
@@ -44,6 +42,7 @@ async function uploadFile(file: UploadedFile, userid: number) {
   try {
     console.log("Upload File");
     // const filepath = await moveFilePromise(file);
+    //testReadTags(file)
     const tag = await readTagsPromise(file).catch(err => { console.log(err); throw err });
     const res = await upload(file, tag, userid).catch(err => { console.log(err); throw err });
     // fs.unlink(filepath, err => {});
@@ -63,6 +62,11 @@ async function uploadFile(file: UploadedFile, userid: number) {
 //     console.log("Failed to move file to local: " + err);
 //     throw err;
 //   }
+// }
+
+// async function testReadTags(file: UploadedFile) {
+//   const tags = await mm.parseBuffer(file.data);
+//   console.log("tags", tags);
 // }
 
 function readTagsPromise(file: UploadedFile) {

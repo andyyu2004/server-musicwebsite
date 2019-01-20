@@ -15,12 +15,12 @@ async function checkUnique(artist: string, album: string, title: string, userid:
   const trackhash = sha1_64(artist + album + title + userid);
   const command = `SELECT * FROM Tracks 
     WHERE trackid = ? 
-    AND artist = ?
-    AND album = ?
+    AND artistid = ?
+    AND albumid = ?
     AND userid = ?
     LIMIT 1`;
   try {
-    const res = await query(command, [trackhash, artisthash, albumhash, userid]).catch(err => { throw err });
+    const res = await query(command, [trackhash, artisthash, albumhash, userid]).catch(err => { throw err; });
     return res.length === 0;
   } catch (err) {
     console.log("Failed to select Track" + err);
@@ -43,8 +43,8 @@ function createTrackObj(tag, userid: number): TrackModel {
     comments,
     userid,
     trackid: trackhash,
-    album: albumhash,
-    artist: artisthash,
+    albumid: albumhash,
+    artistid: artisthash,
     trackNumber: track || 0,
     lyrics: lyric,
     genre: genre || "",
@@ -54,7 +54,7 @@ function createTrackObj(tag, userid: number): TrackModel {
 async function addTrackToDB(track: TrackModel) {
   const command = "INSERT INTO Tracks SET ?";
   try {
-    return await query(command, track).catch(err => { throw err });
+    return await query(command, track).catch(err => { throw err; });
   } catch (err) {
     console.log("Failed to insert Track" + err);
     throw err;
@@ -69,11 +69,11 @@ function uploadTrack(filepath: string) {
 
 async function getAllTracks(userid: string) {
   const command = 
-    `SELECT trackid, title, artistname, albumname, genre, filename, encoding 
-    from Tracks t inner join Albums al on t.album = al.albumid inner join 
-    Artists ar on al.artist = ar.artistid WHERE t.userid = ? ORDER BY t.title`;
+    `SELECT trackid, title, ar.artist, al.album, genre, filename, encoding 
+    from Tracks t inner join Albums al on t.albumid = al.albumid inner join 
+    Artists ar on al.artistid = ar.artistid WHERE t.userid = ? ORDER BY t.title`;
   try {
-    return await query(command, userid).catch(err => { throw err });
+    return await query(command, userid).catch(err => { throw err; });
   } catch (err) {
     console.log("Failed to get Tracks " + err);
     throw err;
@@ -83,7 +83,7 @@ async function getAllTracks(userid: string) {
 async function getFileStream(userid: number, encoding: string, trackid: number): Promise<[ReadStream, number]> {
   try {
     const filepath = path.join(__dirname, '../../users/', userid.toString(), trackid.toString() + encoding);
-    const stats = await promisify(fs.stat)(filepath).catch(err => { throw err });
+    const stats = await promisify(fs.stat)(filepath).catch(err => { throw err; });
     return [fs.createReadStream(filepath), stats.size];
   } catch (err) {
     throw err;

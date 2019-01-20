@@ -53,20 +53,26 @@ async function getSalt(req, res) {
     res.status(200).send(salt);
   } catch (err) {
     console.log("Error in getSalt " + err);
-    res.status(500).send(err);
+    return res.status(500).send(err);
   }
 }
 
 async function encrypt(req, res) {
-  const { email, password } = req.body;
-  console.log('encrypt');
-  const { salt } = await getUserSalt(email).catch(err => { throw err; });
-  if (!salt) {
-    console.log("USER DOES NOT EXIST");
-    return res.status(422).send("User does not exist");
+  try {
+    const { email, password } = req.body;
+    console.log('encrypt');
+    const resp = await getUserSalt(email).catch(err => { throw err; });
+    const salt = resp.salt;
+    if (!salt) {
+      console.log("USER DOES NOT EXIST");
+      return res.status(422).send("User does not exist");
+    }
+    const hash = crypto.pbkdf2Sync(password, salt, 1000, 512, 'sha512').toString('hex');
+    return res.status(200).send(hash);
+  } catch (err) {
+    console.log("Error in encrypt " + err);
+    return res.status(500).send();
   }
-  const hash = crypto.pbkdf2Sync(password, salt, 1000, 512, 'sha512').toString('hex');
-  return res.status(200).send(hash);
 }
 
 export { 

@@ -3,7 +3,7 @@ import * as mysql from 'mysql';
 // mysql -u RDS_username -p -h RDS_endpoint
 let pool;
 
-if (process.env.USE_RDS) {
+if (process.env.USE_RDS !== '0') {
   console.log("Using RDS");
   pool = mysql.createPool({
     connectionLimit: 10, 

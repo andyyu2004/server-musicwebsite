@@ -20,7 +20,7 @@ export default function(passport) {
           return done(null, false, { message: "Password Incorrect" });
         }
         console.log("Authenticated");
-        done(null, email);
+        return done(null, email);
       })
       .catch(err => console.log(err));
     })

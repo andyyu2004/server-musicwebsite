@@ -38,7 +38,7 @@ async function addUserToDB(user: UserModel) {
 async function getPassword(email: string) {
   const command = `SELECT password from Users WHERE email = ? LIMIT 1`;
   try {
-    const [ password ] = await query(command, email).catch(err => { console.log(err); throw err });
+    const [ password ] = await query(command, email).catch(err => { throw err; });
     return password;
   } catch (err) {
     console.log(err);
@@ -53,7 +53,7 @@ async function hashPassword(password: string, salt: string): Promise<string> {
 async function getUserSalt(email: string) {
   const command = `SELECT salt from Users WHERE email = ? LIMIT 1`;
   try {
-    const [ salt ] = await query(command, email).catch(err => { console.log(err); throw err });
+    const [ salt ] = await query(command, email).catch(err => { throw err; });
     return salt;
   } catch (err) {
     console.log(err);
