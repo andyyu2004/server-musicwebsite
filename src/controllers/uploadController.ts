@@ -1,7 +1,6 @@
 import * as jsmediatags from 'jsmediatags';
 import { upload } from '../repositories/music';
 import promisify from '../utility/promisify';
-import * as mm from 'music-metadata';
 import { Request, Response } from 'express';
 import { UploadedFile } from 'express-fileupload';
 

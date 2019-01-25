@@ -16,7 +16,6 @@ export default function(passport) {
       })
       .then(hashedPassword => {
         if (hashedPassword !== password) {
-          console.log("Incorrect Password");
           return done(null, false, { message: "Password Incorrect" });
         }
         console.log("Authenticated");
