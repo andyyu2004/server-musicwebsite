@@ -1,8 +1,11 @@
 import * as jsmediatags from 'jsmediatags';
 import { upload } from '../repositories/music';
 import promisify from '../utility/promisify';
+import * as mm from 'music-metadata';
+import { IAudioMetadata } from 'music-metadata'
 import { Request, Response } from 'express';
 import { UploadedFile } from 'express-fileupload';
+import { AudioMetadata } from '../models/TrackModel';
 
 async function uploadFiles(req: Request, res: Response) {
   const files: UploadedFile[] = <any> req.files;
@@ -41,10 +44,9 @@ async function uploadFile(file: UploadedFile, userid: number) {
   try {
     console.log("Upload File");
     // const filepath = await moveFilePromise(file);
-    //testReadTags(file)
-    const tag = await readTagsPromise(file).catch(err => { console.log(err); throw err });
+    const tag = await readTags(file)
+    //const tag = await readTagsPromise(file).catch(err => { console.log(err); throw err });
     const res = await upload(file, tag, userid).catch(err => { console.log(err); throw err });
-    // fs.unlink(filepath, err => {});
     return res;
   } catch(err) {
     console.log("FAILED TO UPLOAD FILE: ");
@@ -63,10 +65,15 @@ async function uploadFile(file: UploadedFile, userid: number) {
 //   }
 // }
 
-// async function testReadTags(file: UploadedFile) {
-//   const tags = await mm.parseBuffer(file.data);
-//   console.log("tags", tags);
-// }
+async function readTags(file: UploadedFile): Promise<AudioMetadata> {
+  try {
+    const tags: AudioMetadata = await mm.parseBuffer(file.data).catch(err => { throw err; });
+    tags.filename = file.name
+    return tags;
+  } catch (err) {
+    throw err;
+  }
+}
 
 function readTagsPromise(file: UploadedFile) {
   return new Promise((resolve, reject) => {

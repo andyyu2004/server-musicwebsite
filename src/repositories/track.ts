@@ -6,6 +6,8 @@ import * as path from 'path';
 import { TrackModel } from '../models';
 import { uploadFileS3, getFileS3 } from '../services/aws';
 import promisify from '../utility/promisify';
+import { IAudioMetadata } from 'music-metadata';
+import { AudioMetadata } from '../models/TrackModel';
 
 // POST
 
@@ -28,26 +30,28 @@ async function checkUnique(artist: string, album: string, title: string, userid:
   }
 }
 
-function createTrackObj(tag, userid: number): TrackModel {
-  const { title, track, genre, lyrics, filename, comment, album, artist } = tag.tags;
+function createTrackObj(tags: AudioMetadata, userid: number): TrackModel {
+  const { title, track, genre : genres, lyrics, comment, album, artist } = tags.common;
+  const { filename } = tags;
   const artisthash = sha1_64(artist + userid);
   const albumhash = sha1_64(artist + album + userid);
   const trackhash = sha1_64(artist + album + title + userid);
-  const lyric = lyrics ? lyrics.lyrics : "";
-  const comments = comment ? comment.text : "";
+  const lyric = lyrics ? lyrics[0] : "";
+  const comments = comment ? comment[0] : "";
   const encoding = path.extname(filename);
+  const genre = genres ? genres[0] : ""
   return {
     filename, 
     title,
     encoding,
     comments,
     userid,
+    genre,
     trackid: trackhash,
     albumid: albumhash,
     artistid: artisthash,
-    trackNumber: track || 0,
+    trackNumber: track.no || 0,
     lyrics: lyric,
-    genre: genre || "",
   };
 }
 
@@ -106,6 +110,19 @@ async function getTrackFile(filename: string) {
   //return await getFileS3(filename);
 }
 
+// DELETE
+
+async function deleteTrackFile(userid, trackid, encoding) {
+  const filepath = path.join(__dirname, '../../users/', userid.toString(), trackid.toString() + encoding);
+  const command = `DELETE FROM Tracks WHERE trackid = ? AND userid = ? AND encoding = ?`
+  try {
+    fs.unlink(filepath, err => console.log(err))
+    query(command, [trackid, userid, encoding])
+  } catch (err) {
+    throw err
+  }
+}
+
 export { 
   checkUnique, 
   addTrackToDB, 
@@ -114,4 +131,5 @@ export {
   getTrackFile,
   uploadTrack,
   getFileStream,
-};
+  deleteTrackFile,
+}

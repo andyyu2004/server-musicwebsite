@@ -16,8 +16,8 @@ async function checkUnique(artist: string, album: string, userid: number): Promi
   }
 }
 
-function createAlbumObj(tag, userid: number): AlbumModel {
-  const { album, artist } = tag.tags;
+function createAlbumObj(tags, userid: number): AlbumModel {
+  const { album, artist } = tags.common;
   const artisthash = sha1_64(artist + userid);
   const albumhash = sha1_64(artist + album + userid);
   return {

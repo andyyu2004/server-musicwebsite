@@ -1,4 +1,4 @@
-
+import { IAudioMetadata } from 'music-metadata'
 type id = number;
 
 export default interface TrackModel {
@@ -15,4 +15,8 @@ export default interface TrackModel {
   lyrics?: string;
   comments?: string;
   bitrate?: number;
+}
+
+export interface AudioMetadata extends IAudioMetadata {
+  filename?: string
 }

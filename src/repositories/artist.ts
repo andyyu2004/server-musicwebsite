@@ -1,6 +1,7 @@
 import sha1_64 from '../utility/sha1custom';
 import query from '../services/mysql';
 import { ArtistModel } from '../models'
+import { IAudioMetadata } from 'music-metadata';
 
 async function checkUnique(artist: string, userid: number): Promise<boolean> {
   const command = `SELECT * FROM Artists WHERE artist = ? AND userid = ? LIMIT 1`;
@@ -13,8 +14,8 @@ async function checkUnique(artist: string, userid: number): Promise<boolean> {
   }
 }
 
-function createArtistObject(tag, userid: number): ArtistModel {
-  const { artist } = tag.tags;
+function createArtistObject(tags: IAudioMetadata, userid: number): ArtistModel {
+  const { artist } = tags.common;
   const hash = sha1_64(artist + userid);
   return {
     userid,
