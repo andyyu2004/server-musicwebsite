@@ -36,8 +36,9 @@ async function getTrack(req: Request, res: Response) {
     const { id, encoding } = req.params;
     const [stream, fileSize] = await getFileStream(userid, encoding, id).catch(err => { throw err; });
     const head = {
-      'Content-Length': fileSize,
-      'Content-Type': `audio/${encoding}`,
+      'content-length': fileSize,
+      'content-type': `audio/${encoding.substring(1)}`,
+      'accept-ranges': 'bytes'
     }
     res.writeHead(200, head);
     return stream.pipe(res);  
