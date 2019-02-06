@@ -44,15 +44,37 @@ async function uploadFile(file: UploadedFile, userid: number) {
   try {
     console.log("Upload File");
     // const filepath = await moveFilePromise(file);
-    const tag = await readTags(file)
-    //const tag = await readTagsPromise(file).catch(err => { console.log(err); throw err });
-    const res = await upload(file, tag, userid).catch(err => { console.log(err); throw err });
+    const tags = await readTags(file)
+    // const tag = await readTagsPromise(file).catch(err => { console.log(err); throw err });
+    const res = await upload(file, tags, userid).catch(err => { console.log(err); throw err });
     return res;
   } catch(err) {
     console.log("FAILED TO UPLOAD FILE: ");
     throw err;
   }
 }
+
+// { format:
+//   { tagTypes: [ 'ID3v2.3' ],
+//     lossless: false,
+//     dataformat: 'mp3',
+//     bitrate: 320000,
+//     sampleRate: 48000,
+//     numberOfChannels: 2,
+//     codecProfile: 'CBR',
+//     numberOfSamples: 20844288,
+//     duration: 434.256 },
+//  native: undefined,
+//  common:
+//   { track: { no: 8, of: null },
+//     disk: { no: null, of: null },
+//     title: '... And The Great Cold Death Of The Earth',
+//     artists: [ 'Agalloch' ],
+//     artist: 'Agalloch',
+//     album: 'The Mantle',
+//     year: 2002,
+//     genre: [ 'Atmospheric Folk Black Metal' ] },
+//  filename: 'Agalloch - ...And The Great Cold Death Of The Earth.mp3' }
 
 // async function moveFilePromise(file): Promise<any> {
 //   const filepath = path.join(__dirname, '../../musicFiles/', file.name);
@@ -69,26 +91,27 @@ async function readTags(file: UploadedFile): Promise<AudioMetadata> {
   try {
     const tags: AudioMetadata = await mm.parseBuffer(file.data).catch(err => { throw err; });
     tags.filename = file.name
+    // console.log(tags)
     return tags;
   } catch (err) {
     throw err;
   }
 }
 
-function readTagsPromise(file: UploadedFile) {
-  return new Promise((resolve, reject) => {
-    new jsmediatags.Reader(file.data)
-    .read({
-      onSuccess: tag => {
-        tag.tags.filename = file.name;
-        resolve(tag);
-      },
-      onError: err => {
-        reject("Failed to read tags: " + err.type + err.info);
-      },
-    });
-  });
-}
+// function readTagsPromise(file: UploadedFile) {
+//   return new Promise((resolve, reject) => {
+//     new jsmediatags.Reader(file.data)
+//     .read({
+//       onSuccess: tag => {
+//         tag.tags.filename = file.name;
+//         resolve(tag);
+//       },
+//       onError: err => {
+//         reject("Failed to read tags: " + err.type + err.info);
+//       },
+//     });
+//   });
+// }
 
 
 

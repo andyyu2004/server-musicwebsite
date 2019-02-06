@@ -15,7 +15,7 @@ router.use('/music/torrent-tracks', (req: any, res, next) => {
   next();
 });
 
-router.use('/protected', passport.authenticate('jwt', { session: false }), protectedRouter);
+router.use('/protected', passport.authenticate(['jwtFromBearerHeader', 'jwtFromQueryParameter'], { session: false }), protectedRouter);
 
 router.get('/test', (req, res) => {
   console.log('Test API Called');
@@ -42,8 +42,6 @@ router.get('/error', (req, res) => {
 router.get('/music/torrent-tracks/:magnetURI/:fileName', (req, res) => {
   getTrackByMagnet(req, res);
 });
-
-
 
 router.get('/music/artists', (req, res) => {
   res.send("All Artists")

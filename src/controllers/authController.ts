@@ -3,10 +3,11 @@ import * as jwt from 'jsonwebtoken';
 import sha1_64 from '../utility/sha1custom';
 
 function signIn(req: any, res, next) {
+  console.log(req.body)
   passport.authenticate('local', { session: false }, (err, user, info) => {
     if (err || !user) {
       console.log("Error in auth/signIn " + err);
-      return res.status(422).json({ err });
+      return res.status(400).json({ err });
     }
     req.login(user, err => {
       if (err) { console.log("Error in auth/signIn/login " + err); return res.send(err); }

@@ -25,15 +25,23 @@ export default function(passport) {
     })
   );
 
-  const jwtOpts = {
-    jwtFromRequest: ExtractJwt.fromUrlQueryParameter('jwt_token'),
-    // jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: process.env.jwtSecret,
-    session: false,
-  };
+  passport.use('jwtFromQueryParameter', 
+    new JwtStrategy({
+      jwtFromRequest: ExtractJwt.fromUrlQueryParameter('jwt_token'),
+      secretOrKey: process.env.jwtSecret,
+      session: false,
+    }, (jwt_payload, done) => {
+      const { user, userid } = jwt_payload;
+      done(null, user, { userid }); // access req.authInfo.userid
+    })
+  )
 
-  passport.use('jwt', 
-    new JwtStrategy(jwtOpts, (jwt_payload, done) => {
+  passport.use('jwtFromBearerHeader', 
+    new JwtStrategy({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: process.env.jwtSecret,
+      session: false,
+    }, (jwt_payload, done) => {
       const { user, userid } = jwt_payload;
       done(null, user, { userid }); // access req.authInfo.userid
     })

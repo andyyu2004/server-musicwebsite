@@ -32,6 +32,7 @@ async function checkUnique(artist: string, album: string, title: string, userid:
 
 function createTrackObj(tags: AudioMetadata, userid: number): TrackModel {
   const { title, track, genre : genres, lyrics, comment, album, artist } = tags.common;
+  const { bitrate, sampleRate, duration , bitsPerSample} = tags.format;
   const { filename } = tags;
   const artisthash = sha1_64(artist + userid);
   const albumhash = sha1_64(artist + album + userid);
@@ -47,6 +48,10 @@ function createTrackObj(tags: AudioMetadata, userid: number): TrackModel {
     comments,
     userid,
     genre,
+    bitrate,
+    sampleRate,
+    duration,
+    bitdepth: bitsPerSample,
     trackid: trackhash,
     albumid: albumhash,
     artistid: artisthash,
@@ -73,7 +78,7 @@ function uploadTrack(filepath: string) {
 
 async function getAllTracks(userid: string) {
   const command = 
-    `SELECT trackid, title, ar.artist, al.album, genre, filename, encoding 
+    `SELECT trackid, title, ar.artist, al.album, genre, filename, encoding, samplerate, bitrate, bitdepth, duration, tracknumber
     from Tracks t inner join Albums al on t.albumid = al.albumid inner join 
     Artists ar on al.artistid = ar.artistid WHERE t.userid = ? ORDER BY t.title`;
   try {

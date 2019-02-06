@@ -39,14 +39,17 @@ create table Tracks (
 	userid bigint unsigned NOT NULL,
 	foreign key(userid) references Users(userid),
 	encoding varchar(50) NOT NULL,
-	title varchar(100),
+	title varchar(256) NOT NULL,
 	filename varchar(256) NOT NULL,
+	samplerate mediumint unsigned,
+	bitrate mediumint unsigned,
+	bitdepth tinyint unsigned,
+	duration smallint unsigned,
 	length smallint unsigned,
 	genre varchar(50),
 	trackNumber tinyint unsigned,
 	lyrics text,
-	comments varchar(256),
-	bitrate smallint
+	comments varchar(256)
 );
 
 create table UserTracks (

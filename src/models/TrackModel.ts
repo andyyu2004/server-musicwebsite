@@ -8,13 +8,15 @@ export default interface TrackModel {
   albumid: id;
   artistid: id;
   userid: id;
-  length?: number;
+  duration: number;
+  sampleRate?: number;
+  bitrate?: number;
+  bitdepth?: number;
   title?: string;
   genre?: string;
   trackNumber?: number;
   lyrics?: string;
   comments?: string;
-  bitrate?: number;
 }
 
 export interface AudioMetadata extends IAudioMetadata {

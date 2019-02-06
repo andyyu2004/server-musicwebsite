@@ -48,9 +48,9 @@ async function getSalt(req, res) {
     const salt = await getUserSalt(email).catch(err => { throw err; });
     if (!salt) {
       console.log("USER DOES NOT EXIST");
-      return res.status(422).send("User does not exist");
+      return res.status(400).send("User does not exist");
     }
-    res.status(200).send(salt);
+    res.status(200).json(salt);
   } catch (err) {
     console.log("Error in getSalt " + err);
     return res.status(500).send(err);
@@ -65,7 +65,7 @@ async function encrypt(req, res) {
     const salt = resp.salt;
     if (!salt) {
       console.log("USER DOES NOT EXIST");
-      return res.status(422).send("User does not exist");
+      return res.status(400).send("User does not exist");
     }
     const hash = crypto.pbkdf2Sync(password, salt, 1000, 512, 'sha512').toString('hex');
     return res.status(200).send(hash);
