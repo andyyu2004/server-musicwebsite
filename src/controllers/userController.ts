@@ -8,14 +8,15 @@ async function registerUser(req, res) {
     const isUnique = await checkUnique(email).catch(err => { throw err; });
     if (!isUnique) {
       console.log(`User ${email} already exists`);
-      return res.status(200).send("User already exists");
+      return res.status(400).send("User already exists");
     }
     const newUser = createUserObj(email, name, password, salt);
     await addUserToDB(newUser).catch(err => { throw err; });
     console.log('User Created', email);
+    res.status(200).send("Successfully Registered User");
   } catch (err) {
     console.log("Error in registerUser " + err);
-    res.status(500).send(err);
+    res.status(400).json({ error: err });
   }
 }
 
@@ -53,7 +54,7 @@ async function getSalt(req, res) {
     res.status(200).json(salt);
   } catch (err) {
     console.log("Error in getSalt " + err);
-    return res.status(500).send(err);
+    return res.status(400).send(err);
   }
 }
 
@@ -71,7 +72,7 @@ async function encrypt(req, res) {
     return res.status(200).send(hash);
   } catch (err) {
     console.log("Error in encrypt " + err);
-    return res.status(500).send();
+    return res.status(400).send();
   }
 }
 

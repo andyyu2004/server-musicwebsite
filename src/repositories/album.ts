@@ -17,14 +17,15 @@ async function checkUnique(artist: string, album: string, userid: number): Promi
 }
 
 function createAlbumObj(tags, userid: number): AlbumModel {
-  const { album, artist } = tags.common;
+  const { album, artist, year } = tags.common;
   const artisthash = sha1_64(artist + userid);
   const albumhash = sha1_64(artist + album + userid);
   return {
     userid,
+    album,
+    year,
     albumid: albumhash,
     artistid: artisthash,
-    album: album,
   };
 }
 
@@ -42,7 +43,9 @@ async function addAlbumToDB(album: AlbumModel) {
 
 async function getAllAlbums(userid: number) {
   const command = 
-  `SELECT albumid, album, artistid from Albums a inner join Artists ar on a.artistid = ar.artistid WHERE a.userid = ?;`;
+  `SELECT albumid, album, a.artistid, ar.artist, year 
+  from Albums a inner join Artists ar on 
+  a.artistid = ar.artistid WHERE a.userid = ?`;
   try {
     return await query(command, userid).catch(err => { throw err; });
   } catch (err) {
@@ -51,4 +54,24 @@ async function getAllAlbums(userid: number) {
   }
 }
 
-export { checkUnique, addAlbumToDB, createAlbumObj, getAllAlbums };
+async function getAlbumById(userid: number, albumid: number) {
+  const command = `SELECT trackid, title, ar.artist, al.album, 
+  genre, filename, encoding, samplerate, bitrate, bitdepth, 
+  duration, tracknumber from Tracks t inner join Albums al 
+  on t.albumid = al.albumid inner join     
+  Artists ar on al.artistid = ar.artistid WHERE 
+  t.userid = ? AND al.albumid = ? ORDER BY t.tracknumber`;
+  try {
+    return await query(command, [userid, albumid]).catch(err => { throw err });
+  } catch (err) {
+    throw err;
+  }
+}
+
+export { 
+  checkUnique, 
+  addAlbumToDB, 
+  createAlbumObj, 
+  getAllAlbums ,
+  getAlbumById,
+};

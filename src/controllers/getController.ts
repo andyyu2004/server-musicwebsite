@@ -1,8 +1,10 @@
 import { getAllTracks, getTrackFile, getFileStream } from '../repositories/track';
-import { getAllAlbums } from '../repositories/album';
+import { getAllAlbums, getAlbumById } from '../repositories/album';
 import { getFileS3 } from '../services/aws';
+import * as HttpStatus from 'http-status-codes';
 import { Request, Response } from 'express';
 import * as fuzzy from 'fuzzyset.js';
+import { getArtists, getArtistById } from '../repositories/artist';
 
 // Should log all errors to err file 
 
@@ -11,10 +13,10 @@ async function getTracksInfo(req: Request, res: Response) {
   console.log("Fetch All Tracks For User ", req.user);
   try {
     const allTracks = await getAllTracks(userid).catch(err => { throw err; });
-    res.status(200).json(allTracks);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).send(err);
+    res.status(HttpStatus.OK).json(allTracks);
+  } catch (error) {
+    console.log(error);
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error });
   }
 }
 
@@ -25,7 +27,7 @@ async function getAlbumsInfo(req: Request, res: Response) {
     res.status(200).send(allAlbums);
   } catch (err) {
     console.log(err);
-    return res.status(500).send(err);
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(err);
   }
 }
 
@@ -40,12 +42,50 @@ async function getTrack(req: Request, res: Response) {
       'content-type': `audio/${encoding.substring(1)}`,
       'accept-ranges': 'bytes'
     }
-    res.writeHead(200, head);
+    res.writeHead(HttpStatus.OK, head);
     return stream.pipe(res);  
-  } catch (err) {
-    return res.status(500).send(err);
+  } catch (error) {
+    return res.status(500).json({ error });
   }
 }
+
+async function getAlbum(req: Request, res: Response) {
+  const { userid } = req.authInfo;
+  const { id } = req.params;
+  try {
+    const album = await getAlbumById(userid, id);
+    res.status(HttpStatus.OK).send(album);
+  } catch(error) {
+    console.log(error);
+    res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error});
+  }
+}
+
+async function getArtist(req: Request, res: Response) {
+  const { userid } = req.authInfo;
+  const { id } = req.params;
+  try {
+    const artist = await getArtistById(userid, id);
+    res.status(HttpStatus.OK).send(artist);
+  } catch (error) {
+    console.log(error);
+    res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error });
+  }
+}
+
+async function getArtistInfo(req: Request, res: Response) {
+  const { userid } = req.authInfo;
+  try {
+    const artists = await getArtists(userid);
+    console.log(artists);
+    res.send(artists);
+  } catch(error) {
+    console.log(error);
+    res.json({ error });
+  }
+}
+
+// Torrent
 
 function normaliseFileName(fname) {
   return fname.split('.').slice(0, -1).join('.')
@@ -93,9 +133,9 @@ async function getTrackByMagnet(req: any, res: Response) {
       stream.pipe(res);
     });
   }
-  catch(err) {
+  catch(error) {
     torrentClient.destroy();
-    return res.status(500).send(err);
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error });
   }
 }
 
@@ -118,4 +158,7 @@ export {
   getAlbumsInfo,
   getTrack,
   getTrackByMagnet,
+  getAlbum,
+  getArtistInfo,
+  getArtist,
 };

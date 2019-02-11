@@ -3,7 +3,7 @@ import * as jwt from 'jsonwebtoken';
 import sha1_64 from '../utility/sha1custom';
 
 function signIn(req: any, res, next) {
-  console.log(req.body)
+  // console.log(req.body)
   passport.authenticate('local', { session: false }, (err, user, info) => {
     if (err || !user) {
       console.log("Error in auth/signIn " + err);
