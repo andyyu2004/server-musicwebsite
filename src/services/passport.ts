@@ -28,7 +28,7 @@ export default function(passport) {
   passport.use('jwtFromQueryParameter', 
     new JwtStrategy({
       jwtFromRequest: ExtractJwt.fromUrlQueryParameter('jwt_token'),
-      secretOrKey: process.env.jwtSecret,
+      secretOrKey: process.env.JWT_SECRET,
       session: false,
     }, (jwt_payload, done) => {
       const { user, userid } = jwt_payload;
@@ -39,13 +39,13 @@ export default function(passport) {
   passport.use('jwtFromBearerHeader', 
     new JwtStrategy({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: process.env.jwtSecret,
+      secretOrKey: process.env.JWT_SECRET,
       session: false,
     }, (jwt_payload, done) => {
       const { user, userid } = jwt_payload;
       done(null, user, { userid }); // access req.authInfo.userid
     })
-  )
+  );
 
   passport.serializeUser((user, done) => { // User is email for now? changed to id
     done(null, user);

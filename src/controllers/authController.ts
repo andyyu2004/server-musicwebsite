@@ -15,7 +15,7 @@ function signIn(req: any, res, next) {
       console.log(`req.user: ${JSON.stringify(req.user)}`)
       user = user.toLowerCase();
       const userid = sha1_64(user);
-      const token = jwt.sign({ user, userid }, process.env.jwtSecret);
+      const token = jwt.sign({ user, userid }, process.env.JWT_SECRET);
       res.json({
         message: `Welcome`,
         user,

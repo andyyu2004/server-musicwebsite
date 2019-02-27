@@ -33,6 +33,7 @@ async function getAlbumsInfo(req: Request, res: Response) {
 
 async function getTrack(req: Request, res: Response) {
   const { userid } = req.authInfo;
+  // console.log(req.headers);
   try {
     console.log("Streaming Track");
     const { id, encoding } = req.params;

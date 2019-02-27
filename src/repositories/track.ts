@@ -78,7 +78,7 @@ function uploadTrack(filepath: string) {
 
 async function getAllTracks(userid: string) {
   const command = 
-    `SELECT trackid, title, ar.artist, al.album, genre, filename, encoding, samplerate, bitrate, bitdepth, duration, tracknumber
+    `SELECT trackid, title, ar.artist, al.album, genre, filename, encoding, samplerate, bitrate, bitdepth, duration, tracknumber, lyrics
     from Tracks t inner join Albums al on t.albumid = al.albumid inner join 
     Artists ar on al.artistid = ar.artistid WHERE t.userid = ? ORDER BY t.title`;
   try {
