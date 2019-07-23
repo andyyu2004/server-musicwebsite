@@ -47,11 +47,11 @@ app.get('/*', (req: Request, res: Response) => {
 // Creates the /dist/users folder on startup if non-existent
 const folderpath = path.join(__dirname, '/users');
 fs.exists(folderpath)
-.then(res => {
-  if (!res) {
-    fs.mkdir(folderpath);
-  }
-}).catch(err => console.log(err));
+  .then(res => {
+    if (!res) {
+      fs.mkdir(folderpath);
+    }
+  }).catch(err => console.log(err));
 
 const port = process.env.PORT || 3001;
 app.listen(port, () => console.log("Music Server listening on port", port));

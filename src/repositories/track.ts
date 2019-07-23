@@ -121,10 +121,11 @@ async function deleteTrackFile(userid, trackid, encoding) {
   const filepath = path.join(__dirname, '../../users/', userid.toString(), trackid.toString() + encoding);
   const command = `DELETE FROM Tracks WHERE trackid = ? AND userid = ? AND encoding = ?`
   try {
-    fs.unlink(filepath, err => console.log(err))
-    query(command, [trackid, userid, encoding])
+    fs.unlink(filepath, _ => {}); // The callback gets called even on success..
+    query(command, [trackid, userid, encoding]);
+    // Doesn't remove empty albums and artists
   } catch (err) {
-    throw err
+    throw err;
   }
 }
 
