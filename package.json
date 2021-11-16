@@ -25,7 +25,7 @@
     "@types/passport": "^1.0.0",
     "@types/passport-local": "^1.0.33",
     "@types/webtorrent": "^0.98.4",
-    "aws-sdk": "^2.382.0",
+    "aws-sdk": "^2.814.0",
     "body-parser": "^1.18.3",
     "braces": "^3.0.2",
     "cors": "^2.8.5",
