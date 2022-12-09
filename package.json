@@ -31,7 +31,7 @@
     "cors": "^2.8.5",
     "dotenv": "^6.2.0",
     "dropbox": "^4.0.14",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "express-fileupload": "^1.0.0",
     "express-session": "^1.15.6",
     "fast-levenshtein": "^2.0.6",
